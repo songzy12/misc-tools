@@ -1,8 +1,11 @@
 import requests
+import time
 import json
 
 from .config import MID, COOKIE
-from .dynamic_util import build_dynamic_api_url
+from .dynamic_util import build_dynamic_api_url, build_next_dynamic_api_url, extract_picture_urls, download_pictures
+
+OUTPUT_DIR = 'bilibili/output'
 
 HEADERS = {
     "User-Agent":
@@ -21,5 +24,21 @@ HEADERS = {
 if __name__ == '__main__':
     dynamic_api_url = build_dynamic_api_url(MID)
     print(dynamic_api_url)
-    resp = requests.get(dynamic_api_url, headers=HEADERS)
-    print(json.loads(resp.content))
+
+    picture_urls = {}
+    while dynamic_api_url != '':
+        resp = requests.get(dynamic_api_url, headers=HEADERS).json()
+
+        current_picture_urls = extract_picture_urls(resp)
+        picture_urls = picture_urls | current_picture_urls
+
+        dynamic_api_url = build_next_dynamic_api_url(MID, resp)
+        print(dynamic_api_url)
+
+        time.sleep(3)
+
+    download_pictures(picture_urls)
+
+    with open(f'{OUTPUT_DIR}/picture_urls.json', mode='w',
+              encoding='utf-8') as f:
+        json.dump(picture_urls, f, ensure_ascii=False, indent=4)
