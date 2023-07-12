@@ -3,7 +3,7 @@ import time
 import json
 
 from .config import MID, COOKIE
-from .dynamic_util import build_dynamic_api_url, build_next_dynamic_api_url, extract_picture_urls, download_pictures
+from .dynamic_util import build_dynamic_api_url, build_next_dynamic_api_url, extract_picture_urls
 
 OUTPUT_DIR = 'bilibili/output'
 
@@ -40,6 +40,9 @@ def extract_all_picture_urls():
 
     return picture_urls
 
+
+def download_pictures(picture_urls):
+    pass
 
 if __name__ == '__main__':
     picture_urls = extract_all_picture_urls()

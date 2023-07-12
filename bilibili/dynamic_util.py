@@ -32,7 +32,3 @@ def extract_picture_urls(resp):
         ]
 
     return picture_urls
-
-
-def download_pictures(picture_urls):
-    pass
