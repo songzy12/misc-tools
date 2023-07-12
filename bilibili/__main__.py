@@ -1,7 +1,8 @@
 import requests
 import json
 
-from . import config
+from .config import MID, COOKIE
+from .dynamic_util import build_dynamic_api_url
 
 HEADERS = {
     "User-Agent":
@@ -14,19 +15,11 @@ HEADERS = {
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-Site": "none",
     "Sec-Fetch-User": "?1",
-    "Cookie": config.COOKIE
+    "Cookie": COOKIE
 }
 
-DYNAMIC_API_ROOT = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space'
-
-
-def construct_dynamic_api_url(mid, offset=""):
-    if offset:
-        return f"{DYNAMIC_API_ROOT}?host_mid={mid}&offset={offset}"
-    return f"{DYNAMIC_API_ROOT}?host_mid={mid}"
-
-
-dynamic_api_url = construct_dynamic_api_url(config.MID)
-print(dynamic_api_url)
-resp = requests.get(dynamic_api_url, headers=HEADERS)
-print(json.loads(resp.content))
+if __name__ == '__main__':
+    dynamic_api_url = build_dynamic_api_url(MID)
+    print(dynamic_api_url)
+    resp = requests.get(dynamic_api_url, headers=HEADERS)
+    print(json.loads(resp.content))
