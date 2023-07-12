@@ -21,11 +21,12 @@ HEADERS = {
     "Cookie": COOKIE
 }
 
-if __name__ == '__main__':
+
+def extract_all_picture_urls():
+    picture_urls = {}
+
     dynamic_api_url = build_dynamic_api_url(MID)
     print(dynamic_api_url)
-
-    picture_urls = {}
     while dynamic_api_url != '':
         resp = requests.get(dynamic_api_url, headers=HEADERS).json()
 
@@ -37,8 +38,14 @@ if __name__ == '__main__':
 
         time.sleep(3)
 
-    download_pictures(picture_urls)
+    return picture_urls
+
+
+if __name__ == '__main__':
+    picture_urls = extract_all_picture_urls()
 
     with open(f'{OUTPUT_DIR}/picture_urls.json', mode='w',
               encoding='utf-8') as f:
         json.dump(picture_urls, f, ensure_ascii=False, indent=4)
+
+    download_pictures(picture_urls)
