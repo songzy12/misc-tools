@@ -1,11 +1,15 @@
+import os
 import requests
 import time
 import json
+
+from datetime import datetime
 
 from .config import MID, COOKIE
 from .dynamic_util import build_dynamic_api_url, build_next_dynamic_api_url, extract_picture_urls
 
 OUTPUT_DIR = 'bilibili/output'
+URLS_FILENAME = 'picture_urls.json'
 
 HEADERS = {
     "User-Agent":
@@ -41,14 +45,35 @@ def extract_all_picture_urls():
     return picture_urls
 
 
+def download_picture(url, filepath):
+    parent_dir = os.path.dirname(filepath)
+    if not os.path.exists(parent_dir):
+        os.makedirs(parent_dir, exist_ok=True)
+    print(url, filepath)
+
+
 def download_pictures(picture_urls):
-    pass
+    for pub_ts, urls in picture_urls.items():
+        pub_dt = datetime.fromtimestamp(int(pub_ts))
+        for index, url in enumerate(urls):
+            picture_name = os.path.basename(url)
+            download_picture(
+                url,
+                f'{OUTPUT_DIR}/{MID}/{pub_dt.strftime("%Y%m%d_%H%M%S")}/{index}_{picture_name}'
+            )
+
 
 if __name__ == '__main__':
-    picture_urls = extract_all_picture_urls()
+    URLS_PATH = f"{OUTPUT_DIR}/{URLS_FILENAME}"
 
-    with open(f'{OUTPUT_DIR}/picture_urls.json', mode='w',
-              encoding='utf-8') as f:
-        json.dump(picture_urls, f, ensure_ascii=False, indent=4)
+    picture_urls = {}
+    if not os.path.exists(URLS_PATH):
+        picture_urls = extract_all_picture_urls()
+
+        with open(URLS_PATH, mode='w', encoding='utf-8') as f:
+            json.dump(picture_urls, f, ensure_ascii=False, indent=4)
+
+    with open(URLS_PATH) as f:
+        picture_urls = json.loads(f.read())
 
     download_pictures(picture_urls)
