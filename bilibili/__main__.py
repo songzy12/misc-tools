@@ -51,6 +51,11 @@ def download_picture(url, filepath):
         os.makedirs(parent_dir, exist_ok=True)
     print(url, filepath)
 
+    time.sleep(1)
+    response = requests.get(url)
+    with open(filepath, "wb") as f:
+        f.write(response.content)
+
 
 def download_pictures(picture_urls):
     for pub_ts, urls in picture_urls.items():
