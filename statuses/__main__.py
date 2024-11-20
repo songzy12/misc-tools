@@ -81,6 +81,7 @@ while True:
 print(f"len(mblogs): {len(obsolete_mblogs)}")
 obsolete_mblogs_filepath = os.path.join(OUTPUT_ROOT_DIR, str(UID),
                                         OBSOLETE_MBLOGS_FILENAME)
+print(f"output file: {obsolete_mblogs_filepath}")
 if not os.path.exists(obsolete_mblogs_filepath):
     make_parent_dirs_if_not_exist(obsolete_mblogs_filepath)
     with open(obsolete_mblogs_filepath, mode='w', encoding='utf-8') as f:
